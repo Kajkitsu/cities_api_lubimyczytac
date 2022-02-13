@@ -26,12 +26,12 @@ class Author(Enum):
     WIESLAWA_SZYMBORSKA = 14851
 
 
-def get_cities_from_seria(seria: Seria, limit: int = sys.maxsize):
-    return __get_cities_for_url(lambda page: __get_seria_url(seria, page), limit)
+def get_quotes_from_seria(seria: Seria, limit: int = sys.maxsize):
+    return __get_quotes_for_url(lambda page: __get_seria_url(seria, page), limit)
 
 
-def get_cities_from_author(author: Author, limit: int = sys.maxsize):
-    return __get_cities_for_url(lambda page: __get_author_url(author, page), limit)
+def get_quotes_from_author(author: Author, limit: int = sys.maxsize):
+    return __get_quotes_for_url(lambda page: __get_author_url(author, page), limit)
 
 
 def __get_author_url(author: Author, page: int):
@@ -43,13 +43,13 @@ def __get_seria_url(seria: Seria, page: int):
     return "https://lubimyczytac.pl/cytaty?listId=quoteListFull&serieIds[]=" \
            + str(seria.value) + "&tab=All&phrase=&sortBy=popular&paginatorType=Standard&page=" + str(page)
 
-def __get_cities_for_url(url_getter, limit):
+def __get_quotes_for_url(url_getter, limit):
     res = []
     last = ['tmp']
     page = 0
 
     while len(last) > 0 and limit > len(res):
-        last = __get_cities_from_page(url_getter, page)
+        last = __get_quotes_from_page(url_getter, page)
         for val in last:
             res.append(val)
         page = page + 1
@@ -61,7 +61,7 @@ def __get_page_content(url: string):
     return requests.get(url).content
 
 
-def __get_cities_from_page(__url_getter, page: int):
+def __get_quotes_from_page(__url_getter, page: int):
     soup = BeautifulSoup(__get_page_content(__url_getter(page)), "html.parser")
 
     results = soup.find(id="quoteListFullPaginator")
